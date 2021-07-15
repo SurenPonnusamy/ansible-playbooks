@@ -8,6 +8,6 @@
     - name: Install Java on server
       apt: 
         name: "{{ item }}"
-        with_items:
-          - curl
-        status: present
+      with_items:
+        - curl
+      status: present
