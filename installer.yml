@@ -1,5 +1,8 @@
 - name: Installation of MongoDB in windows server
   hosts: all
+  vars:
+      major_version: "{{ major_version }}"
+      minor_version: "{{ minor_version }}"
   tasks:
     - name: Create directories for MongoDB
       win_file:
@@ -8,7 +11,7 @@
        
     - name: Download MSI file for MongoDB
       win_get_url:
-        url: https://fastdl.mongodb.org/windows/mongodb-windows-x86_64-4.4.7-signed.msi
+        url: https://fastdl.mongodb.org/windows/mongodb-windows-x86_64-{{ major_version }}.{{ minor_version }}-signed.msi
         dest: C:\\Users\\mongodb.msi   
         
     - name: Install MongoDB Installer in Windows Server
@@ -17,5 +20,5 @@
         chdir: C:\\Users
         
     - name: Set env variable
-      win_command: cmd.exe /c setx path "%PATH%;C:\Program Files\MongoDB\Server\4.4\bin" /M
+      win_command: cmd.exe /c setx path "%PATH%;C:\Program Files\MongoDB\Server\{{ major_version }}\bin" /M
 
