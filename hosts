@@ -1,2 +1,7 @@
 [webserver]
-localhost
+127.0.0.1 
+
+[all:vars]
+ansible_connection=ssh
+ansible_user=surendharponnusamy 
+ansible_ssh_pass=Suren2302%
