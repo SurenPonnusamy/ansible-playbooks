@@ -1,24 +1,80 @@
-- name: Installation of MongoDB in windows server
-  hosts: all
+- name: Installation of MongoDB in windows server  
+  gather_facts: yes
   vars:
       major_version: "{{ major_version }}"
       minor_version: "{{ minor_version }}"
+      target_node: "{{ target_node }}"
+      become_yes: "{{ become_yes }}"
+  hosts: "{{ target_node }}"
+  become: "{{ become_yes }}"    
   tasks:
+  
+    - name: Print OS distribution
+      debug:
+        msg: "{{ ansible_distribution }}"
+  
+    - name: Create directories for MongoDB in Linux
+      file:
+        path: /data/db
+        state: directory
+      when: ansible_facts['os_family'] == "Debian" or ansible_facts['os_family'] == "RedHat" or ansible_facts['os_family'] == "CentOS"
+      
+    - name: Add MongoDB repo in RedHat
+      yum_repository:
+        name: mongodb
+        baseurl: https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/{{ major_version }}/x86_64/
+        description: MongoDB Yum repo
+        gpgcheck: yes
+        enabled: yes
+        gpgkey: https://www.mongodb.org/static/pgp/server-{{ major_version }}.asc
+      when: ansible_facts['os_family'] == "RedHat"        
+      
+    - name: Install MongoDB for RHEL
+      yum:
+        name: mongodb-org
+        state: present
+        update_cache: yes
+      when: ansible_facts['os_family'] == "RedHat"  
+      
+    - name: Start MongoDB Service for RHEL
+      service:
+        name: mongod
+        state: started
+      when: ansible_facts['os_family'] == "RedHat"   
+      
+    - name: Install MongoDB for Debian
+      apt:
+        name: mongodb
+        state: latest
+        update_cache: yes
+      when: ansible_facts['os_family'] == "Debian"                        
+       
+    - name: Start MongoDB Service for Debian
+      service:
+        name: mongodb
+        state: started
+      when: ansible_facts['os_family'] == "Debian"  
+                
+
     - name: Create directories for MongoDB
       win_file:
         path: C:\\Users\\data\\db
         state: directory
+      when: ansible_facts['os_family'] == "Windows"  
        
     - name: Download MSI file for MongoDB
       win_get_url:
         url: https://fastdl.mongodb.org/windows/mongodb-windows-x86_64-{{ major_version }}.{{ minor_version }}-signed.msi
         dest: C:\\Users\\mongodb.msi   
+      when: ansible_facts['os_family'] == "Windows"  
         
     - name: Install MongoDB Installer in Windows Server
       win_command: msiexec /i mongodb.msi /qb ADDLOCAL="ServerService,Client"
       args: 
         chdir: C:\\Users
+      when: ansible_facts['os_family'] == "Windows"  
         
     - name: Set env variable
       win_command: cmd.exe /c setx path "%PATH%;C:\Program Files\MongoDB\Server\{{ major_version }}\bin" /M
+      when: ansible_facts['os_family'] == "Windows"
 
