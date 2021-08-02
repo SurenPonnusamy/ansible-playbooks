@@ -47,7 +47,7 @@
         name: gnupg
         state: present
         update_cache: yes
-      when: ansbile_facts['os_family'] == "Debian"
+      when: ansible_facts['os_family'] == "Debian"
       
     - name: Add Mongo key in Debian 
       shell:
