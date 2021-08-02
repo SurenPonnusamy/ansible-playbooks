@@ -12,7 +12,20 @@
     - name: Print OS distribution
       debug:
         msg: "{{ ansible_distribution }}"
-  
+        
+    - name: Copy the file from src to remote vm on Linux machines
+      copy:
+        src: /ansible-playbooks/hosts
+        dest: /tmp
+      when: ansible_facts['os_family'] == "Debian" or ansible_facts['os_family'] == "RedHat" or ansible_facts['os_family'] == "CentOS"  
+
+    - name: Copy the file from src to remote vm on Windows machines
+      copy:
+        src: /ansible-playbooks/winrm.ps1
+        dest: C:\\Users\\winrm.ps1
+      when: ansible_facts['os_family'] == "Windows"  
+
+
     - name: Create directories for MongoDB in Linux
       file:
         path: /data/db
