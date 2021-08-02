@@ -42,6 +42,11 @@
         state: started
       when: ansible_facts['os_family'] == "RedHat"   
       
+    - name: Add Mongo key in Debian 
+      shell:
+        cmd: wget -qO - https://www.mongodb.org/static/pgp/server-{{ major_version }}.asc | apt-key add -
+      when: ansible_facts['os_family'] == "Debian"  
+      
     - name: Add Mongo Repo in Debian
       shell:
         cmd: echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/{{ major_version }} multiverse" | tee /etc/apt/sources.list.d/mongodb-org-{{ major_version }}.list
