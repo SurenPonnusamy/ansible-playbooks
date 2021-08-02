@@ -42,6 +42,13 @@
         state: started
       when: ansible_facts['os_family'] == "RedHat"   
       
+    - name: Install gnupg in Debian
+      apt:
+        name: gnupg
+        state: present
+        update_cache: yes
+      when: ansbile_facts['os_family'] == "Debian"
+      
     - name: Add Mongo key in Debian 
       shell:
         cmd: wget -qO - https://www.mongodb.org/static/pgp/server-{{ major_version }}.asc | apt-key add -
