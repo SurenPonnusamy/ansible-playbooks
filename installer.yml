@@ -42,10 +42,16 @@
         state: started
       when: ansible_facts['os_family'] == "RedHat"   
       
+    - name: Add Mongo Repo in Debian
+      apt_repository:
+        repo: deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/{{ major_version }} multiverse
+        state: present
+      when: ansible_facts['os_family'] == "Debian"  
+      
     - name: Install MongoDB for Debian
       apt:
         name: mongodb
-        state: latest
+        state: present
         update_cache: yes
       when: ansible_facts['os_family'] == "Debian"                        
        
